@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, unused_local_variable, unused_field
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/Anouncement.dart';
@@ -85,4 +85,5 @@ class _MyWidgetState extends State<MyWidget> {
     ));
   }
 }
+
 
