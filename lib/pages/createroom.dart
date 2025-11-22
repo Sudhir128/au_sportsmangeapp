@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_import, use_key_in_widget_constructors, unused_local_variable
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -58,7 +58,7 @@ class CreateRoomState extends State<createRoom> {
     if (picked != null) {
       setState(() {
         inTimeController.text = picked.format(
-            context); // Update the inTimeController with the selected time
+            context); 
       });
     }
   }
@@ -71,7 +71,7 @@ class CreateRoomState extends State<createRoom> {
     if (picked != null) {
       setState(() {
         outTimeController.text = picked.format(
-            context); // Update the outTimeController with the selected time
+            context); 
       });
     }
   }
@@ -99,11 +99,11 @@ class CreateRoomState extends State<createRoom> {
           }
         ]);
 
-        // Data inserted successfully
+    
         _showSuccessDialog();
         _navigatehome();
       } catch (e) {
-        // Error inserting data
+
         _showErrorDialog();
         _navigatehome();
       }
@@ -263,7 +263,6 @@ class CreateRoomState extends State<createRoom> {
                     TextField(
                       controller: inTimeController,
                       decoration: InputDecoration(
-                        // Customize the input field for in_time
                         fillColor: Colors.transparent.withOpacity(0.10),
                         filled: true,
                         labelText: 'In Time',
@@ -281,7 +280,7 @@ class CreateRoomState extends State<createRoom> {
                     TextField(
                       controller: outTimeController,
                       decoration: InputDecoration(
-                        // Customize the input field for out_time
+                    
                         fillColor: Colors.transparent.withOpacity(0.10),
                         filled: true,
                         labelText: 'Out Time',
@@ -302,3 +301,4 @@ class CreateRoomState extends State<createRoom> {
             )));
   }
 }
+
