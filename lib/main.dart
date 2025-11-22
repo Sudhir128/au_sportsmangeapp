@@ -34,7 +34,6 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primaryColor: Colors.blue.shade300,
-          //colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
         initialRoute: supabase.auth.currentSession != null ? '/Register' : '/',
@@ -86,3 +85,4 @@ class _MyWidgetState extends State<MyWidget> {
     ));
   }
 }
+
