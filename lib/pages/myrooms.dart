@@ -55,8 +55,6 @@ Future<void> leaveRoom() async {
         .execute();
 
     if (response.data == null) {
-      // Successful removal from the room
-      // Optionally, you can navigate back to the MyRooms page or perform any other action
       Navigator.pop(context);
     } else if (response.data != null) {
       print('Supabase Error: ${response.data}');
@@ -89,7 +87,6 @@ Future<void> leaveRoom() async {
                 final user = usersInRoom[index];
                 return ListTile(
                   title: Text(user['user_name'] as String),
-                  // You can display additional user details here
                 );
               },
             ),
@@ -102,4 +99,5 @@ Future<void> leaveRoom() async {
       ),
     );
   }
+
 }
