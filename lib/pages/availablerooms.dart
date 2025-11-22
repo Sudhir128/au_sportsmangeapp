@@ -29,8 +29,6 @@ class _AvailableRoomsState extends State<availableRooms> {
     if (response.data == null) {
       // Data fetched successfully
       print('Data fetched successfully');
-
-      // Convert the fetched data into RoomData objects
       List<RoomData> fetchedRooms = [];
       for (var entry in response.data as List) {
         fetchedRooms.add(RoomData(
@@ -90,7 +88,7 @@ class RoomCard extends StatelessWidget {
         title: Text(room.name),
         subtitle: Text('${room.size} - ${room.description}'),
         onTap: () {
-          // Handle room tap if needed
+          
         },
       ),
     );
@@ -104,3 +102,4 @@ class RoomData {
 
   RoomData(this.name, this.size, this.description);
 }
+
