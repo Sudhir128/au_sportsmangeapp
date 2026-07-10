@@ -1,70 +1,166 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_application_1/pages/login.dart';
+import 'package:flutter_application_1/pages/profile.dart';
+import 'package:flutter_application_1/services/auth_service.dart';
+import 'package:flutter_application_1/services/session_service.dart';
+import 'package:flutter_application_1/widgets/common.dart';
+import 'package:flutter_application_1/theme/app_theme.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize:
-            const Size.fromHeight(75.0), // Set your desired height here
-        child: AppBar(
-          backgroundColor: Colors.blue,
-          elevation: 0, // Remove shadow
-          title: const Padding(
-            padding:
-                EdgeInsets.only(top: 25.0), // Add your desired padding here
-            child: Text("AU SPORTS",
-            style: TextStyle(
-              color: Colors.white, // Set the text color to blue
-              fontSize: 24,
-          
-            ),),
-          ),
-
-          centerTitle: true, // You can set a title here if you want
-        ),
+  Future<void> _logout(BuildContext context) async {
+    await AuthService.logout();
+    if (!context.mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      PageRouteBuilder(
+        pageBuilder: (context, anim, secondAnim) => const LoginPage(),
+        transitionsBuilder: (context, anim, secondAnim, child) {
+          return FadeTransition(opacity: anim, child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 400),
       ),
-      body: Container(
-        width: double.infinity, // Makes the container take up the full width
-        decoration:
-            const BoxDecoration(color: Color.fromARGB(255, 250, 250, 250)),
-        child: Center(
-          child: Container(
-            width: 300,
-            color: const Color.fromARGB(255, 255, 255, 255),
-            child: Column(
-              mainAxisSize:
-                  MainAxisSize.min, // Use only the space needed by the children
-              children: [
-                buildButton(context, 'Sports', '/Sports'),
-                const SizedBox(height: 30.0),
-                buildButton(context, 'Anouncement', '/Anouncement'),
-                const SizedBox(height: 30.0),
-                buildButton(context, 'Events', '/Events'),
-              ],
-            ),
-          ),
-        ),
-      ),
+      (_) => false,
     );
   }
 
-  Widget buildButton(BuildContext context, String label, String routeName) {
-    return SizedBox(
-      width: 200.0,
-      height: 60.0,
-      child: ElevatedButton(
-        onPressed: () {
-          Navigator.pushNamed(context, routeName);
-        },
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-          foregroundColor: MaterialStateProperty.all<Color>(
-              const Color.fromARGB(255, 255, 255, 255)),
+  @override
+  Widget build(BuildContext context) {
+    final user = SessionService.currentUser;
+
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: ShaderMask(
+          shaderCallback: (bounds) => AppTheme.primaryGradient.createShader(bounds),
+          child: const Text('AU SPORTS', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)),
         ),
-        child: Text(label),
+        actions: [
+          IconButton(
+            tooltip: 'Logout',
+            onPressed: () => _logout(context),
+            icon: const Icon(Icons.logout),
+          ),
+        ],
+      ),
+      body: AppBackground(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 80, 20, 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration: AppTheme.glassCardDecoration,
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProfilePage()),
+                    );
+                  },
+                  splashColor: AppTheme.primary.withValues(alpha: 0.1),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: AppTheme.primaryGradient,
+                          ),
+                          child: CircleAvatar(
+                            radius: 30,
+                            backgroundColor: AppTheme.surfaceLight,
+                            child: Text(
+                              (user?.name.isNotEmpty == true ? user!.name[0] : 'A').toUpperCase(),
+                              style: GoogleFonts.outfit(
+                                color: AppTheme.textPrimary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user?.name ?? 'Player',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.textPrimary,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.accent.withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  'Roll: ${user?.rollnumber ?? '-'}',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppTheme.accent,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                user?.email ?? '',
+                                style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const SectionHeader(
+                title: 'What would you like to do?',
+                subtitle: 'Explore campus sports and events',
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  children: [
+                    MenuCard(
+                      icon: Icons.sports_soccer,
+                      title: 'Games',
+                      subtitle: 'Host, join, and track your matches',
+                      onTap: () => Navigator.pushNamed(context, '/Sports'),
+                    ),
+                    MenuCard(
+                      icon: Icons.campaign_outlined,
+                      title: 'Announcements',
+                      subtitle: 'Campus sports updates and notices',
+                      onTap: () => Navigator.pushNamed(context, '/Anouncement'),
+                    ),
+                    MenuCard(
+                      icon: Icons.event_available_outlined,
+                      title: 'Events',
+                      subtitle: 'Upcoming tournaments and meets',
+                      onTap: () => Navigator.pushNamed(context, '/Events'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

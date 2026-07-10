@@ -1,89 +1,52 @@
-
-
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/config/supabase_config.dart';
 import 'package:flutter_application_1/pages/Anouncement.dart';
 import 'package:flutter_application_1/pages/Events.dart';
 import 'package:flutter_application_1/pages/createroom.dart';
 import 'package:flutter_application_1/pages/joinroom.dart';
 import 'package:flutter_application_1/pages/loadpage.dart';
+import 'package:flutter_application_1/pages/login.dart';
+import 'package:flutter_application_1/pages/myApp_materialPage.dart';
 import 'package:flutter_application_1/pages/myrooms.dart';
+import 'package:flutter_application_1/pages/register.dart';
 import 'package:flutter_application_1/pages/reset_password.dart';
 import 'package:flutter_application_1/pages/room.dart';
+import 'package:flutter_application_1/services/session_service.dart';
+import 'package:flutter_application_1/theme/app_theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Supabase.initialize(
-    url: 'https://aiadfhpajrtlxjiypkuk.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpYWRmaHBhanJ0bHhqaXlwa3VrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTkwMTQ2NjcsImV4cCI6MjAxNDU5MDY2N30.7XfE2XuXcueNRp8nbgXN52z3CYvpe7PeVXf4pB_V8t8',
+    url: SupabaseConfig.url,
+    publishableKey: SupabaseConfig.publishableKey,
   );
-  final supabase = Supabase.instance.client;
-  runApp(MyApp());
+  await SessionService.init();
+  runApp(const AuSportsApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class AuSportsApp extends StatelessWidget {
+  const AuSportsApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'authentication',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primaryColor: Colors.blue.shade300,
-          useMaterial3: true,
-        ),
-        initialRoute: supabase.auth.currentSession != null ? '/Register' : '/',
-        home: MyWidget());
-  }
-}
-
-final supabase = Supabase.instance.client;
-
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
-
-  @override
-  State<MyWidget> createState() => _MyWidgetState();
-}
-
-class _MyWidgetState extends State<MyWidget> {
-  User? _user;
-  @override
-  @override
-  void initState() {
-    _getAuth();
-    super.initState();
-  }
-
-  Future<void> _getAuth() async {
-    setState(() {
-      _user = supabase.auth.currentUser;
-    });
-    Supabase.instance.client.auth.onAuthStateChange.listen((event) {
-      setState(() {
-        _user = event.session?.user;
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return (MaterialApp(
-      home: LoadingPage(),
+      title: 'AU Sports',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      home: const LoadingPage(),
       routes: {
-        '/Sports': (context) => room(),
-        '/Anouncement': (context) => aListScreen(),
-        '/Events': (context) => EventListScreen(),
-        '/Create Room': (context) => createRoom(),
-         '/Join Room': (context) => joinroom(),
-        '/My Room': (context) => myrooms(roomId:1, userId:1)
+        '/login': (_) => const LoginPage(),
+        '/register': (_) => const RegisterPage(),
+        '/home': (_) => const Home(),
+        '/Sports': (_) => const RoomPage(),
+        '/Anouncement': (_) => const AnnouncementsScreen(),
+        '/Events': (_) => const EventListScreen(),
+        '/Create Room': (_) => const CreateRoomPage(),
+        '/Join Room': (_) => const JoinRoomPage(),
+        '/My Room': (_) => const MyRoomsPage(),
+        '/reset-password': (_) => const ResetPasswordPage(),
       },
-    ));
+    );
   }
 }
-
-

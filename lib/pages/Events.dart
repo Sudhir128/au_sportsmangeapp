@@ -1,35 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_application_1/theme/app_theme.dart';
+import 'package:flutter_application_1/widgets/common.dart';
 
 class EventListScreen extends StatelessWidget {
-  final List<Event> events = [
-    Event(
-      title: 'U S University Alumini fair',
-      description: 'venue : american center chennai',
+  const EventListScreen({super.key});
+
+  static final List<EventItem> events = [
+    EventItem(
+      title: 'AU University Alumni Fair',
+      description: 'Venue: American Center Chennai',
       date: 'November 18',
       imageAssetPath: 'lib/events/event2.jpg',
     ),
-    Event(
-      title: 'CTF projects',
-      description: 'long tearm and short tearm projects',
+    EventItem(
+      title: 'CTF Projects',
+      description: 'Long term and short term projects',
       date: '2023-11-27',
       imageAssetPath: 'lib/events/event3.jpg',
     ),
-    Event(
+    EventItem(
       title: 'VYUHAA 23',
-      description: 'events and karnivals',
-      date: 'october 14',
+      description: 'Events and carnivals',
+      date: 'October 14',
       imageAssetPath: 'lib/events/event1.jpg',
     ),
-    Event(
-      title: 'VYUHAA 23',
-      description: 'x hall EEE department',
-      date: 'october 14',
+    EventItem(
+      title: 'VYUHAA 23 - EEE',
+      description: 'X Hall, EEE Department',
+      date: 'October 14',
       imageAssetPath: 'lib/events/event5.jpg',
     ),
-    Event(
-      title: 'ALUMINI MEET 23',
-      description: 'Ramanujam hall',
-      date: 'october 15',
+    EventItem(
+      title: 'Alumni Meet 23',
+      description: 'Ramanujam Hall',
+      date: 'October 15',
       imageAssetPath: 'lib/events/event4.jpg',
     ),
   ];
@@ -37,37 +42,30 @@ class EventListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text('Event List'),
-        titleSpacing: 00.0,
-        centerTitle: true,
-        toolbarHeight: 50.2,
-        toolbarOpacity: 1,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              bottomRight: Radius.circular(25),
-              bottomLeft: Radius.circular(25)),
-        ),
-        elevation: 50,
-        backgroundColor: Colors.blueGrey[400],
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text('Events'),
       ),
-      body: ListView.builder(
-        itemCount: events.length,
-        itemBuilder: (context, index) {
-          return EventCard(event: events[index]);
-        },
+      body: AppBackground(
+        child: ListView.builder(
+          padding: const EdgeInsets.fromLTRB(20, 100, 20, 20),
+          itemCount: events.length,
+          itemBuilder: (context, index) => EventCard(event: events[index]),
+        ),
       ),
     );
   }
 }
 
-class Event {
+class EventItem {
   final String title;
   final String description;
   final String date;
   final String imageAssetPath;
 
-  Event({
+  const EventItem({
     required this.title,
     required this.description,
     required this.date,
@@ -76,58 +74,111 @@ class Event {
 }
 
 class EventCard extends StatelessWidget {
-  final Event event;
+  final EventItem event;
 
-  EventCard({required this.event});
+  const EventCard({super.key, required this.event});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 40,
-      margin: EdgeInsets.all(8.0),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      decoration: AppTheme.glassCardDecoration,
+      clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Image.asset(
-            event.imageAssetPath,
-            fit: BoxFit.cover,
-            height: 200,
+          Stack(
+            children: [
+              Image.asset(
+                event.imageAssetPath,
+                fit: BoxFit.cover,
+                height: 180,
+                width: double.infinity,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  height: 180,
+                  color: AppTheme.surfaceLight,
+                  child: const Center(
+                    child: Icon(Icons.image_not_supported, size: 50, color: AppTheme.textSecondary),
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        AppTheme.background.withValues(alpha: 0.8),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 16,
+                left: 16,
+                right: 16,
+                child: Text(
+                  event.title,
+                  style: GoogleFonts.outfit(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withValues(alpha: 0.8),
+                        blurRadius: 10,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  event.title,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  children: [
+                    const Icon(Icons.calendar_today, size: 16, color: AppTheme.accent),
+                    const SizedBox(width: 8),
+                    Text(
+                      event.date,
+                      style: GoogleFonts.outfit(
+                        color: AppTheme.accent,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 8),
-                Text(
-                  'Date: ${event.date}',
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-                SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Text(
                   event.description,
-                  style: TextStyle(fontSize: 16),
+                  style: GoogleFonts.outfit(
+                    color: AppTheme.textSecondary,
+                    fontSize: 15,
+                  ),
                 ),
-                SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to the view image screen
-                    Navigator.push(
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            ViewImageScreen(imagePath: event.imageAssetPath),
+                        builder: (_) => ViewImageScreen(
+                          imagePath: event.imageAssetPath,
+                          title: event.title,
+                        ),
                       ),
-                    );
-                  },
-                  child: Text('View Image'),
+                    ),
+                    child: const Text('View Poster'),
+                  ),
                 ),
               ],
             ),
@@ -140,17 +191,34 @@ class EventCard extends StatelessWidget {
 
 class ViewImageScreen extends StatelessWidget {
   final String imagePath;
+  final String title;
 
-  ViewImageScreen({required this.imagePath});
+  const ViewImageScreen({super.key, required this.imagePath, required this.title});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      backgroundColor: AppTheme.background,
       appBar: AppBar(
-        title: Text('View Image'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(title),
       ),
-      body: Center(
-        child: Image.asset(imagePath),
+      body: InteractiveViewer(
+        child: Center(
+          child: Image.asset(
+            imagePath,
+            errorBuilder: (context, error, stackTrace) => const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.image_not_supported, size: 100, color: AppTheme.textSecondary),
+                SizedBox(height: 16),
+                Text('Image not found', style: TextStyle(color: AppTheme.textSecondary)),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

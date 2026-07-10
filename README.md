@@ -1,69 +1,83 @@
-AU Sports Management App
+# AU Sports Management App
 
-A Flutter-based mobile application designed for managing sports rooms, events, announcements, and user participation within the AU campus environment.
-This app allows students to create and join sports rooms, check available rooms, view announcements, register/login securely, and manage events — all in a streamlined UI.
+A Flutter app for Anna University students to **create profiles**, **host sports rooms**, and **join games** — similar to TurfTown, built with Flutter and Supabase.
 
-Features
-Authentication
-User Login & Signup
-Password Reset
-Secure form validation
+## Features
 
-Sports Room Management
-Create a new sports room
-Join existing rooms
-View your rooms
-Check all available rooms
+- User registration, login, and password reset
+- Player profile with roll number and contact details
+- Create public/private sports rooms (Cricket, Football, Basketball, and more)
+- Browse and join open rooms by sport
+- View hosted and joined rooms with member list
+- Campus announcements and events gallery
 
-Announcements & Events
-View sports-related announcements
-Browse upcoming & past events
+## Tech Stack
 
-Folder Details
-1️ announcements/
-Contains widgets or models related to sports news and announcements.
+- Flutter (Android, iOS, Web, Windows)
+- Supabase (PostgreSQL + REST API)
+- Shared Preferences (session persistence)
 
-2️ events/
-Handles event listing, event details, and event UI components.
+## Getting Started
 
-3️ images/
-Stores app assets (PNG/JPG/SVG icons, logos, illustrations).
+### 1. Restore Supabase (required)
 
-5️ widgets/
-Reusable custom widgets used across the app (buttons, cards, forms, etc.).
+Your old Supabase project is paused. Create a **new Supabase project**, then:
 
-6️ main.dart
-Entry point of the application, containing providers, route setup, and initialization.
+1. Open **SQL Editor** in the Supabase dashboard
+2. Run the script in [`supabase/schema.sql`](supabase/schema.sql)
+3. Optionally import data from your backup (`db_cluster-09-09-2024@11-15-36.backup`) using `pg_restore` or by copying the `COPY` data for `user`, `room`, and `users_in_rooms` tables
+4. Update credentials in [`lib/config/supabase_config.dart`](lib/config/supabase_config.dart):
 
-Announcement.dart
-Displays all sports-related announcements fetched from the backend or local data.
+```dart
+static const url = 'https://YOUR_PROJECT.supabase.co';
+static const anonKey = 'YOUR_ANON_KEY';
+```
 
-availablerooms.dart
-Shows all sports rooms currently available
-Includes backend data fetching
+### 2. Run the app
 
-createroom.dart
-UI for creating a new sports room
-Includes form validation and improved readability
+```bash
+flutter pub get
+flutter run
+```
 
-joinroom.dart
-Lets users join available rooms
+For web:
 
-loadpage.dart
-Initial loading screen
+```bash
+flutter run -d chrome
+```
 
-login.dart
-Login page UI
-Supabase/Auth service integration
+For Android:
 
-myApp_materialPage.dart
-Main MaterialApp widget
-Contains theme, routing, and navigation setup
+```bash
+flutter run -d android
+```
 
-myrooms.dart
-Displays rooms created or joined by the user
-Shows room info, participants, join status, etc.
+## Project Structure
 
-Tech Stack
-Flutter (Dart)
-Supabase
+```
+lib/
+  config/          # Supabase credentials
+  services/        # Auth, session, and room logic
+  theme/           # App-wide Material theme
+  widgets/         # Shared UI components
+  pages/           # Screens (login, rooms, events, etc.)
+  images/          # App assets
+  events/          # Event posters
+  announcements/   # Announcement images
+supabase/
+  schema.sql       # Database setup for new Supabase project
+```
+
+## Test Login
+
+After restoring your database backup, you can sign in with any user from the `user` table, for example:
+
+- Email: `sudhirgm128@gmail.com`
+- Roll: `2021242020`
+- Password: (as stored in your backup)
+
+## Notes
+
+- Authentication uses a custom `user` table (not Supabase Auth). Session is stored locally after login.
+- Row Level Security policies in `schema.sql` allow the anon key to read/write — tighten these before production.
+- Passwords are stored in plain text in the legacy schema. Consider hashing passwords before going live.
